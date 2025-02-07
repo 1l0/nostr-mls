@@ -11,16 +11,19 @@ import (
 )
 
 type NostrMLS struct {
-	CipherSuite    mls.CipherSuite
-	ExtensionTypes []mls.ExtensionType
+	cipherSuite    mls.CipherSuite
+	extensionTypes []mls.ExtensionType
 }
 
 func NewNostrMLS() *NostrMLS {
 	return &NostrMLS{
-		CipherSuite: mls.CipherSuiteMLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-		ExtensionTypes: []mls.ExtensionType{
-			mls.ExtensionTypeRatchetTree,
+		cipherSuite: mls.CipherSuiteMLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+		extensionTypes: []mls.ExtensionType{
 			mls.ExtensionTypeRequiredCapabilities,
+			// LastResort extension
+			// TODO: wtf is LastResort? skip it for now
+			// ref: https://github.com/erskingardner/nostr-openmls/blob/master/src/lib.rs#L67
+			mls.ExtensionTypeRatchetTree,
 			extension.ExtensionTypeNostrGroup,
 		},
 	}
