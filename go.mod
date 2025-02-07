@@ -1,4 +1,4 @@
-module github.com/1l0/raindrops
+module github.com/1l0/nostr-mls
 
 go 1.23.4
 

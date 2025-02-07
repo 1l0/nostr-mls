@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	extensionTypeNostrGroup mls.ExtensionType = 0xF2EE
+	ExtensionTypeNostrGroup mls.ExtensionType = 0xF2EE
 )
 
 type NostrGroupData struct {
