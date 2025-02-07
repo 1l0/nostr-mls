@@ -1,7 +1,6 @@
 package extension
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/emersion/go-mls"
@@ -60,29 +59,4 @@ func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
 	mls.WriteVector(b, len(n.relays), func(b *cryptobyte.Builder, i int) {
 		mls.WriteOpaqueVec(b, n.relays[i])
 	})
-}
-
-type NostrGroupExtensions struct {
-	extensions []mls.Extension
-}
-
-func (exts *NostrGroupExtensions) Unmarshal(s *cryptobyte.String) error {
-	*exts = NostrGroupExtensions{}
-
-	l, err := mls.UnmarshalExtensionVec(s)
-	if err != nil {
-		return err
-	}
-	for _, ext := range l {
-		if ext.ExtensionType != ExtensionTypeNostrGroup {
-			return fmt.Errorf("mismatched extension type to NostrGroup: %d", ext.ExtensionType)
-		}
-	}
-	exts.extensions = l
-
-	return nil
-}
-
-func (exts *NostrGroupExtensions) Marshal(b *cryptobyte.Builder) {
-	mls.MarshalExtensionVec(b, exts.extensions)
 }
