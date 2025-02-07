@@ -9,7 +9,7 @@ type MemoryStore struct {
 	entries map[string][]byte
 }
 
-func NewMemoryStore() *MemoryStore {
+func NewMemoryStore() Store {
 	return &MemoryStore{
 		entries: make(map[string][]byte, 0),
 	}
