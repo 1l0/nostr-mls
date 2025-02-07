@@ -11,7 +11,7 @@ const (
 	ExtensionTypeNostrGroup mls.ExtensionType = 0xF2EE
 )
 
-type NostrGroupData struct {
+type NostrGroup struct {
 	nostr_group_id []byte
 	name           []byte
 	description    []byte
@@ -19,8 +19,8 @@ type NostrGroupData struct {
 	relays         [][]byte
 }
 
-func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
-	*n = NostrGroupData{}
+func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
+	*n = NostrGroup{}
 
 	if !mls.ReadOpaqueVec(s, &n.nostr_group_id) || !mls.ReadOpaqueVec(s, &n.name) || !mls.ReadOpaqueVec(s, &n.description) {
 		return io.ErrUnexpectedEOF
@@ -47,7 +47,7 @@ func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
 	})
 }
 
-func (n *NostrGroupData) Marshal(b *cryptobyte.Builder) {
+func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
 	b.AddBytes(n.nostr_group_id)
 	b.AddBytes(n.name)
 	b.AddBytes(n.description)
