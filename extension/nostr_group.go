@@ -1,6 +1,7 @@
 package extension
 
 import (
+	"crypto/rand"
 	"io"
 
 	"github.com/emersion/go-mls"
@@ -12,17 +13,41 @@ const (
 )
 
 type NostrGroup struct {
-	nostr_group_id []byte
-	name           []byte
-	description    []byte
-	admin_pubkeys  [][]byte
-	relays         [][]byte
+	id          []byte
+	name        []byte
+	description []byte
+	admins      [][]byte
+	relays      [][]byte
+}
+
+func NewNostrGroup(name, description string, admins, relays []string) (*NostrGroup, error) {
+	id, err := generateRandomBytes(32)
+	if err != nil {
+		return nil, err
+	}
+	al := len(admins)
+	a := make([][]byte, al, al)
+	for i := 0; i < al; i++ {
+		a[i] = []byte(admins[i])
+	}
+	rl := len(relays)
+	r := make([][]byte, rl, rl)
+	for i := 0; i < rl; i++ {
+		r[i] = []byte(relays[i])
+	}
+	return &NostrGroup{
+		id:          id,
+		name:        []byte(name),
+		description: []byte(description),
+		admins:      a,
+		relays:      r,
+	}, nil
 }
 
 func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 	*n = NostrGroup{}
 
-	if !mls.ReadOpaqueVec(s, &n.nostr_group_id) || !mls.ReadOpaqueVec(s, &n.name) || !mls.ReadOpaqueVec(s, &n.description) {
+	if !mls.ReadOpaqueVec(s, &n.id) || !mls.ReadOpaqueVec(s, &n.name) || !mls.ReadOpaqueVec(s, &n.description) {
 		return io.ErrUnexpectedEOF
 	}
 
@@ -31,7 +56,7 @@ func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 		if !mls.ReadOpaqueVec(s, &pubkey) {
 			return io.ErrUnexpectedEOF
 		}
-		n.admin_pubkeys = append(n.admin_pubkeys, pubkey)
+		n.admins = append(n.admins, pubkey)
 		return nil
 	}); err != nil {
 		return err
@@ -48,15 +73,24 @@ func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 }
 
 func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
-	b.AddBytes(n.nostr_group_id)
+	b.AddBytes(n.id)
 	b.AddBytes(n.name)
 	b.AddBytes(n.description)
 
-	mls.WriteVector(b, len(n.admin_pubkeys), func(b *cryptobyte.Builder, i int) {
-		mls.WriteOpaqueVec(b, n.admin_pubkeys[i])
+	mls.WriteVector(b, len(n.admins), func(b *cryptobyte.Builder, i int) {
+		mls.WriteOpaqueVec(b, n.admins[i])
 	})
 
 	mls.WriteVector(b, len(n.relays), func(b *cryptobyte.Builder, i int) {
 		mls.WriteOpaqueVec(b, n.relays[i])
 	})
+}
+
+func generateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
