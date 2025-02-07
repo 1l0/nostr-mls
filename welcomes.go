@@ -11,7 +11,7 @@ type WelcomePreview struct {
 	NostrGroup *extension.NostrGroup
 }
 
-type JoinedGroupResult struct {
+type JoinedGroup struct {
 	Group      *mls.GroupContext
 	NostrGroup *extension.NostrGroup
 }
@@ -26,7 +26,7 @@ func (n *NostrMLS) previewWelcomeEvent(message []byte) (*WelcomePreview, error) 
 	return nil, nil
 }
 
-func (n *NostrMLS) joinGroupFromWelcome(message []byte) (*JoinedGroupResult, error) {
+func (n *NostrMLS) joinGroupFromWelcome(message []byte) (*JoinedGroup, error) {
 	// TODO
 	return nil, nil
 }

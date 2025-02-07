@@ -6,13 +6,13 @@ import (
 	"github.com/1l0/nostr-mls/extension"
 )
 
-type CreateGroupResult struct {
+type CreateGroup struct {
 	MLSGroup   mls.GroupContext
 	Message    []byte
 	NostrGroup extension.NostrGroup
 }
 
-type SelfUpdateResult struct {
+type SelfUpdate struct {
 	Message            []byte
 	PrevExporterSecret string // hex
 	ExporterSecret     string // hex
@@ -21,7 +21,7 @@ type SelfUpdateResult struct {
 
 // creator: pubkey
 // admins: list of pubkeys
-func (n *NostrMLS) createGroup(name, description, creator string, memberKeyPackages []mls.KeyPackage, admins, relays []string) (*CreateGroupResult, error) {
+func (n *NostrMLS) createGroup(name, description, creator string, memberKeyPackages []mls.KeyPackage, admins, relays []string) (*CreateGroup, error) {
 	// TOOD
 	return nil, nil
 }
@@ -46,7 +46,7 @@ func (n *NostrMLS) memberPubkeys(groupID []byte) ([]string, error) {
 	return nil, nil
 }
 
-func (n *NostrMLS) selfUpdate(groupID []byte) (*SelfUpdateResult, error) {
+func (n *NostrMLS) selfUpdate(groupID []byte) (*SelfUpdate, error) {
 	// TODO
 	return nil, nil
 }
