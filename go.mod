@@ -2,7 +2,8 @@ module github.com/1l0/nostr-mls
 
 go 1.23.4
 
-replace github.com/emersion/go-mls => github.com/1l0/go-mls v0.0.0-20250207072855-82d5be5f0430
+// replace github.com/emersion/go-mls => github.com/1l0/go-mls v0.0.0-20250207072855-82d5be5f0430
+replace github.com/emersion/go-mls => ../../../github.com/emersion/go-mls
 
 require (
 	github.com/emersion/go-mls v0.0.0-00010101000000-000000000000
