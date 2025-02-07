@@ -2,6 +2,7 @@ package extension
 
 import (
 	"crypto/rand"
+	"fmt"
 	"io"
 
 	"github.com/emersion/go-mls"
@@ -47,6 +48,24 @@ func NewNostrGroup(name, description string, admins, relays []string) (*NostrGro
 	}, nil
 }
 
+func NostrGroupFromGroupContext(ctx *mls.GroupContext) (*NostrGroup, error) {
+	var ext *mls.Extension = nil
+	for _, ex := range ctx.Extensions {
+		if ex.ExtensionType == ExtensionTypeNostrGroup {
+			ext = &ex
+		}
+	}
+	if ext == nil {
+		return nil, fmt.Errorf("NostrGroup extension not found")
+	}
+	ng := NostrGroup{}
+	cs := cryptobyte.String(ext.ExtensionData)
+	if err := ng.Unmarshal(&cs); err != nil {
+		return nil, err
+	}
+	return &ng, nil
+}
+
 func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 	*n = NostrGroup{}
 
@@ -76,9 +95,9 @@ func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 }
 
 func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
-	b.AddBytes(n.id)
-	b.AddBytes(n.name)
-	b.AddBytes(n.description)
+	mls.WriteOpaqueVec(b, n.id)
+	mls.WriteOpaqueVec(b, n.name)
+	mls.WriteOpaqueVec(b, n.description)
 
 	mls.WriteVector(b, len(n.admins), func(b *cryptobyte.Builder, i int) {
 		mls.WriteOpaqueVec(b, n.admins[i])
@@ -90,7 +109,7 @@ func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
 }
 
 func generateRandomBytes(n int) ([]byte, error) {
-	b := make([]byte, n)
+	b := make([]byte, n, n)
 	_, err := rand.Read(b)
 	if err != nil {
 		return nil, err
