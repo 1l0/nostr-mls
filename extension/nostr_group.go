@@ -20,6 +20,9 @@ type NostrGroup struct {
 	relays      [][]byte
 }
 
+// NewNostrGroup creates new NostrGroup.
+// admins: admin pubkeys
+// relays: relay URLs
 func NewNostrGroup(name, description string, admins, relays []string) (*NostrGroup, error) {
 	id, err := generateRandomBytes(32)
 	if err != nil {
