@@ -1,6 +1,9 @@
 package mls
 
 import (
+	"fmt"
+	"io"
+
 	"github.com/emersion/go-mls"
 	"golang.org/x/crypto/cryptobyte"
 
@@ -24,13 +27,13 @@ func NewNostrMLS() *NostrMLS {
 }
 
 // TODO: delete this
-type TODOExtensions struct {
+type ExampleExtensions struct {
 	extensions []mls.Extension
 }
 
-func (exts *TODOExtensions) Unmarshal(s *cryptobyte.String) error {
+func (exts *ExampleExtensions) UnmarshalExample(s *cryptobyte.String) error {
 
-	*exts = TODOExtensions{}
+	*exts = ExampleExtensions{}
 
 	l, err := mls.UnmarshalExtensionVec(s)
 	if err != nil {
@@ -39,22 +42,24 @@ func (exts *TODOExtensions) Unmarshal(s *cryptobyte.String) error {
 	exts.extensions = l
 
 	return nil
-
-	// *exts = NostrGroupExtensions{}
-
-	// return mls.ReadVector(s, func(s *cryptobyte.String) error {
-	// 	var ext mls.Extension
-	// 	if !s.ReadUint16((*uint16)(&ext.ExtensionType)) || !mls.ReadOpaqueVec(s, &ext.ExtensionData) {
-	// 		return io.ErrUnexpectedEOF
-	// 	}
-	// 	if ext.ExtensionType != ExtensionTypeNostrGroup {
-	// 		return fmt.Errorf("mismatched extension type to NostrGroup: %d", ext.ExtensionType)
-	// 	}
-	// 	exts.extensions = append(exts.extensions, ext)
-	// 	return nil
-	// })
 }
 
-func (exts *TODOExtensions) Marshal(b *cryptobyte.Builder) {
+func (exts *ExampleExtensions) UnmarshalExample2(s *cryptobyte.String) error {
+	*exts = ExampleExtensions{}
+
+	return mls.ReadVector(s, func(s *cryptobyte.String) error {
+		var ext mls.Extension
+		if !s.ReadUint16((*uint16)(&ext.ExtensionType)) || !mls.ReadOpaqueVec(s, &ext.ExtensionData) {
+			return io.ErrUnexpectedEOF
+		}
+		if ext.ExtensionType != extension.ExtensionTypeNostrGroup {
+			return fmt.Errorf("mismatched extension type to NostrGroup: %d", ext.ExtensionType)
+		}
+		exts.extensions = append(exts.extensions, ext)
+		return nil
+	})
+}
+
+func (exts *ExampleExtensions) MarshalExample(b *cryptobyte.Builder) {
 	mls.MarshalExtensionVec(b, exts.extensions)
 }
