@@ -13,11 +13,11 @@ WIP
 
 ### Key Packages
 
-- [x] Generate a BasicCredential with a signing key
-- [x] Create a key package
-- [ ] ~~Delete a key package from store~~ **not planed**
-  - We only store signature keys
-- [x] Parse a key package
+- [x] Update a credential with a signature key pair
+- [x] Create a key package payload
+- [ ] ~~Delete a key package from store~~ 
+  - ***not planned***: We only store signature keys
+- [x] Parse a key package payload
 
 ### Welcomes
 
