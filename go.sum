@@ -1,5 +1,5 @@
-github.com/1l0/go-mls v0.0.0-20250208005016-53cd9c163136 h1:2S5Ycah9EnacI74NH8xmM157CYEXGlaR+GDAcLVe2v4=
-github.com/1l0/go-mls v0.0.0-20250208005016-53cd9c163136/go.mod h1:TgDrjcswNb87DH+esr0vRnwd4A5eUq/FBumXdeGVPso=
+github.com/1l0/go-mls v0.0.0-20250208090403-b38d5b796348 h1:9Ive4M+yrNOcWAH+kCgtLaXInq6BMK2NcJEuJw3N3Og=
+github.com/1l0/go-mls v0.0.0-20250208090403-b38d5b796348/go.mod h1:TgDrjcswNb87DH+esr0vRnwd4A5eUq/FBumXdeGVPso=
 github.com/cloudflare/circl v1.3.7 h1:qlCDlTPz2n9fu58M0Nh1J/JzcFpfgkFHHX3O35r5vcU=
 github.com/cloudflare/circl v1.3.7/go.mod h1:sRTcRWXGLrKw6yIGJ+l7amYJFfAXbZG0kBSc8r4zxgA=
 golang.org/x/crypto v0.32.0 h1:euUpcYgM8WcP71gNpTqQCn6rC2t6ULUPiOzfWaXVVfc=

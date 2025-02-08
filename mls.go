@@ -51,8 +51,3 @@ func (n *NostrMLS) capabilities() *mls.Capabilities {
 		Extensions:   n.extensionTypes,
 	}
 }
-
-func (n *NostrMLS) GenerateCredentialWithKey(pubkey string) (*mls.Credential, error) {
-	// TODO
-	return nil, nil
-}
