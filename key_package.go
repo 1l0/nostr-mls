@@ -1,6 +1,6 @@
 package mls
 
-func (n *NostrMLS) CreateKeyPackageForEvent(pubkey string) (string, error) {
+func (n *NostrMLS) CreateKeyPackageHex(pubkey string) (string, error) {
 	// TODO
 	return "", nil
 }
@@ -10,7 +10,7 @@ func (n *NostrMLS) ParseKeyPackage(keyPackageHex string) (*KeyPackage, error) {
 	return nil, nil
 }
 
-func (n *NostrMLS) DeleteKeyPackageFromStorage(keyPackage *KeyPackage) error {
+func (n *NostrMLS) DeleteKeyPackageFromStore(keyPackage *KeyPackage) error {
 	// TODO
 	return nil
 }

@@ -4,15 +4,14 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"log"
-	"time"
 
-	nmls "github.com/1l0/nostr-mls"
+	mls "github.com/1l0/nostr-mls"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/nip44"
 )
 
 func main() {
-	nostrMLS := nmls.NewNostrMLS(nmls.NewMemoryStore())
+	nostrMLS := mls.NewNostrMLS(mls.NewMemoryStore())
 	aliceKey := nostr.GeneratePrivateKey()
 	alicePubkey, err := nostr.GetPublicKey(aliceKey)
 	if err != nil {
@@ -25,7 +24,7 @@ func main() {
 	}
 
 	// bob's key package is published as [nmls.KindMLSKeyPackage] event on relays
-	bobPkgHex, err := nostrMLS.CreateKeyPackageForEvent(bobPubkey)
+	bobPkgHex, err := nostrMLS.CreateKeyPackageHex(bobPubkey)
 
 	// ================================
 	// We're now acting as Alice
@@ -37,12 +36,12 @@ func main() {
 		panic(err)
 	}
 
-	// create a group bob can join
-	group, err := nostrMLS.NewCreateGroup(
+	// create a group bob can join and Commit as [mls.KindMLSGroupMessage] on group relays
+	group, err := nostrMLS.NewGroup(
 		"Bob & Alice",
 		"A secret chat between Bob and Alice",
 		alicePubkey,
-		[]nmls.KeyPackage{*bobPkg},
+		[]mls.KeyPackage{*bobPkg},
 		[]string{aliceKey, bobPubkey},
 		[]string{"ws://localhost:8080"},
 	)
@@ -50,19 +49,28 @@ func main() {
 		panic(err)
 	}
 	groupData := group.NostrGroupData
-	groupMessage := group.Message
+	welcomeMessage := group.WelcomeMessage
 
-	// TODO: send a gift-wrapped welcome event to bob's DM inboxes
-
-	// send a message to group relays
+	// wait Commit has been done on group relays (to match the welcome message),
+	// then send a gift-wrapped welcome event to bob's DM relays
+	welcomeHex := hex.EncodeToString(welcomeMessage)
 	unsignedEvent := &nostr.Event{
 		PubKey:    alicePubkey,
+		Kind:      mls.KindMLSWelcome,
+		CreatedAt: nostr.Now(),
+		Content:   welcomeHex,
+	}
+	unsignedEvent.ID = unsignedEvent.GetID()
+
+	// send a message to group relays
+	unsignedEvent = &nostr.Event{
+		PubKey:    alicePubkey,
 		Kind:      nostr.KindSimpleGroupChatMessage,
-		CreatedAt: nostr.Timestamp(time.Now().Unix()),
+		CreatedAt: nostr.Now(),
 		Content:   "Hi Bob!",
 	}
 	unsignedEvent.ID = unsignedEvent.GetID()
-	rawMessage, err := nostrMLS.CreateMessageForGroup(groupData.ID, unsignedEvent.String())
+	rawMessage, err := nostrMLS.CreateMessage(groupData.ID, unsignedEvent.String())
 	if err != nil {
 		panic(err)
 	}
@@ -84,41 +92,42 @@ func main() {
 	}
 	ephemeralKey := nostr.GeneratePrivateKey()
 	idHex := hex.EncodeToString(groupData.ID)
-	messageEvent := &nostr.Event{
-		Kind:    nmls.KindMLSGroupMessage,
-		Content: encryptedMessage,
+	chatMessageEvent := &nostr.Event{
+		CreatedAt: nostr.Now(),
+		Kind:      mls.KindMLSGroupMessage,
+		Content:   encryptedMessage,
 		Tags: nostr.Tags{
 			nostr.Tag{"h", idHex},
 		},
 	}
-	messageEvent.Sign(ephemeralKey)
+	chatMessageEvent.Sign(ephemeralKey)
 
 	// ================================
 	// We're now acting as Bob
 	// ================================
 
-	// fetch a welcome event from DM inboxes
-	_, err = nostrMLS.PreviewWelcomeEvent(groupMessage)
+	// fetch a gift-wrapped welcome event from DM relays
+	_, err = nostrMLS.PreviewWelcome(welcomeMessage)
 	if err != nil {
 		panic(err)
 	}
-	// if you like it, join the group
-	_, err = nostrMLS.JoinGroupFromWelcome(groupMessage)
+	// if Bob likes it, he joins the group
+	_, err = nostrMLS.Join(welcomeMessage)
 	if err != nil {
 		panic(err)
 	}
 
 	// fetch a group message event from group relays
-	decryptedMessage, err := nip44.Decrypt(messageEvent.Content, convKey)
+	decryptedMessage, err := nip44.Decrypt(chatMessageEvent.Content, convKey)
 	if err != nil {
 		panic(err)
 	}
-	rawChatEvent, err := nostrMLS.ProcessMessageForGroup(groupData.ID, decryptedMessage)
+	serializedChatEvent, err := nostrMLS.ParseSerializedEventFromGroupMessage(groupData.ID, decryptedMessage)
 	if err != nil {
 		panic(err)
 	}
 	var evt nostr.Event
-	if err := json.Unmarshal(rawChatEvent, &evt); err != nil {
+	if err := json.Unmarshal(serializedChatEvent, &evt); err != nil {
 		panic(err)
 	}
 	log.Printf("Bob received from Alice:\n%+v\n", evt)

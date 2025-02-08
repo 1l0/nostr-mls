@@ -6,14 +6,14 @@ import (
 	"github.com/1l0/nostr-mls/extension"
 )
 
-type CreateGroup struct {
+type Group struct {
 	groupContext   *mls.GroupContext
-	Message        []byte
+	WelcomeMessage []byte
 	NostrGroupData *extension.NostrGroupData
 }
 
-type SelfUpdate struct {
-	Message            []byte
+type GroupUpdateInfo struct {
+	WelcomeMessage     []byte
 	PrevExporterSecret string // hex
 	ExporterSecret     string // hex
 	Epoch              uint64
@@ -23,7 +23,7 @@ type KeyPackage mls.KeyPackage
 
 // creator: pubkey
 // admins: list of pubkeys
-func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPackages []KeyPackage, admins, relays []string) (*CreateGroup, error) {
+func (n *NostrMLS) NewGroup(name, description, creator string, memberKeyPackages []KeyPackage, admins, relays []string) (*Group, error) {
 	// cap := n.Capabilities()
 	// cred, err := n.GenerateCredentialWithKey(creator)
 	// if err != nil {
@@ -48,7 +48,7 @@ func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPa
 	return nil, nil
 }
 
-func (n *NostrMLS) CreateMessageForGroup(groupID []byte, message string) (string, error) {
+func (n *NostrMLS) CreateMessage(groupID []byte, message string) (string, error) {
 	// TODO
 	return "", nil
 }
@@ -58,17 +58,17 @@ func (n *NostrMLS) ExporterSecretWithEpoch(groupID []byte) (string, uint64, erro
 	return "", 0, nil
 }
 
-func (n *NostrMLS) ProcessMessageForGroup(groupID []byte, message string) ([]byte, error) {
+func (n *NostrMLS) ParseSerializedEventFromGroupMessage(groupID []byte, message string) ([]byte, error) {
 	// TODO
 	return nil, nil
 }
 
-func (n *NostrMLS) MemberPubkeys(groupID []byte) ([]string, error) {
+func (n *NostrMLS) memberPubkeys(groupID []byte) ([]string, error) {
 	// TODO
 	return nil, nil
 }
 
-func (n *NostrMLS) NewSelfUpdate(groupID []byte) (*SelfUpdate, error) {
+func (n *NostrMLS) updateInfo(groupID []byte) (*GroupUpdateInfo, error) {
 	// TODO
 	return nil, nil
 }

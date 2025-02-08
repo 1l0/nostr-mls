@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	KindMLSKeyPackage       = 443
-	kindMLSWelcome          = 444
-	KindMLSGroupMessage     = 445
-	KindMLSKeyPackageRelays = 10051
+	KindMLSKeyPackage          = 443
+	KindMLSWelcome             = 444
+	KindMLSGroupMessage        = 445
+	KindMLSKeyPackageRelayList = 10051
 )
 
 type NostrMLS struct {
@@ -40,16 +40,16 @@ func NewNostrMLS(store Store) *NostrMLS {
 	}
 }
 
-func (n *NostrMLS) Capabilities() *mls.Capabilities {
+func (n *NostrMLS) ClearStore() error {
+	return n.store.Clear()
+}
+
+func (n *NostrMLS) capabilities() *mls.Capabilities {
 	return &mls.Capabilities{
 		Versions:     []mls.ProtocolVersion{n.protocolVersion},
 		CipherSuites: []mls.CipherSuite{n.cipherSuite},
 		Extensions:   n.extensionTypes,
 	}
-}
-
-func (n *NostrMLS) ClearStore() error {
-	return n.store.Clear()
 }
 
 func (n *NostrMLS) GenerateCredentialWithKey(pubkey string) (*mls.Credential, error) {
