@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewNostrGroup(t *testing.T) {
-	group, err := NewNostrGroup(
+	group, err := NewNostrGroupData(
 		"bla",
 		"foo",
 		[]string{
@@ -40,7 +40,7 @@ func TestNewNostrGroup(t *testing.T) {
 }
 
 func TestNostrGroupFromGroupContext(t *testing.T) {
-	group, err := NewNostrGroup(
+	group, err := NewNostrGroupData(
 		"bla",
 		"foo",
 		[]string{
@@ -82,7 +82,7 @@ func TestNostrGroupFromGroupContext(t *testing.T) {
 		},
 	}
 
-	result, err := NostrGroupFromGroupContext(ctx)
+	result, err := NostrGroupDataFromContext(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}

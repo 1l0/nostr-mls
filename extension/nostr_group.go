@@ -13,7 +13,7 @@ const (
 	ExtensionTypeNostrGroup mls.ExtensionType = 0xF2EE
 )
 
-type NostrGroup struct {
+type NostrGroupData struct {
 	id          []byte
 	name        []byte
 	description []byte
@@ -21,10 +21,10 @@ type NostrGroup struct {
 	relays      [][]byte
 }
 
-// NewNostrGroup creates new NostrGroup.
+// NewNostrGroupData creates new NostrGroup.
 // admins: admin pubkeys
 // relays: relay URLs
-func NewNostrGroup(name, description string, admins, relays []string) (*NostrGroup, error) {
+func NewNostrGroupData(name, description string, admins, relays []string) (*NostrGroupData, error) {
 	id, err := generateRandomBytes(32)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func NewNostrGroup(name, description string, admins, relays []string) (*NostrGro
 	for i := 0; i < rl; i++ {
 		r[i] = []byte(relays[i])
 	}
-	return &NostrGroup{
+	return &NostrGroupData{
 		id:          id,
 		name:        []byte(name),
 		description: []byte(description),
@@ -48,7 +48,7 @@ func NewNostrGroup(name, description string, admins, relays []string) (*NostrGro
 	}, nil
 }
 
-func NostrGroupFromGroupContext(ctx *mls.GroupContext) (*NostrGroup, error) {
+func NostrGroupDataFromContext(ctx *mls.GroupContext) (*NostrGroupData, error) {
 	var ext *mls.Extension = nil
 	for _, ex := range ctx.Extensions {
 		if ex.ExtensionType == ExtensionTypeNostrGroup {
@@ -58,7 +58,7 @@ func NostrGroupFromGroupContext(ctx *mls.GroupContext) (*NostrGroup, error) {
 	if ext == nil {
 		return nil, fmt.Errorf("NostrGroup extension not found")
 	}
-	ng := NostrGroup{}
+	ng := NostrGroupData{}
 	cs := cryptobyte.String(ext.ExtensionData)
 	if err := ng.Unmarshal(&cs); err != nil {
 		return nil, err
@@ -66,8 +66,8 @@ func NostrGroupFromGroupContext(ctx *mls.GroupContext) (*NostrGroup, error) {
 	return &ng, nil
 }
 
-func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
-	*n = NostrGroup{}
+func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
+	*n = NostrGroupData{}
 
 	if !mls.ReadOpaqueVec(s, &n.id) || !mls.ReadOpaqueVec(s, &n.name) || !mls.ReadOpaqueVec(s, &n.description) {
 		return io.ErrUnexpectedEOF
@@ -94,7 +94,7 @@ func (n *NostrGroup) Unmarshal(s *cryptobyte.String) error {
 	})
 }
 
-func (n *NostrGroup) Marshal(b *cryptobyte.Builder) {
+func (n *NostrGroupData) Marshal(b *cryptobyte.Builder) {
 	mls.WriteOpaqueVec(b, n.id)
 	mls.WriteOpaqueVec(b, n.name)
 	mls.WriteOpaqueVec(b, n.description)

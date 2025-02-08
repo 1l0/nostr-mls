@@ -7,9 +7,9 @@ import (
 )
 
 type CreateGroup struct {
-	MLSGroup   mls.GroupContext
-	Message    []byte
-	NostrGroup extension.NostrGroup
+	groupContext   mls.GroupContext
+	Message        []byte
+	NostrGroupData extension.NostrGroupData
 }
 
 type SelfUpdate struct {
@@ -21,32 +21,52 @@ type SelfUpdate struct {
 
 // creator: pubkey
 // admins: list of pubkeys
-func (n *NostrMLS) createGroup(name, description, creator string, memberKeyPackages []mls.KeyPackage, admins, relays []string) (*CreateGroup, error) {
-	// TOOD
+func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPackages []mls.KeyPackage, admins, relays []string) (*CreateGroup, error) {
+	// cap := n.Capabilities()
+	// cred, err := n.GenerateCredentialWithKey(creator)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// ctx := &mls.GroupContext{}
+
+	// data, err := extension.NewNostrGroupData(name, description, admins, relays)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// var builder cryptobyte.Builder
+	// data.Marshal(&builder)
+	// rawData, err := builder.Bytes()
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// nostrGroupExt := mls.Extension{
+	// 	ExtensionType: extension.ExtensionTypeNostrGroup,
+	// 	ExtensionData: rawData,
+	// }
 	return nil, nil
 }
 
-func (n *NostrMLS) createMessageForGroup(groupID []byte, message string) ([]byte, error) {
+func (n *NostrMLS) CreateMessageForGroup(groupID []byte, message string) ([]byte, error) {
 	// TODO
 	return nil, nil
 }
 
-func (n *NostrMLS) exporterSecretWithEpoch(groupID []byte) (string, uint64, error) {
+func (n *NostrMLS) ExporterSecretWithEpoch(groupID []byte) (string, uint64, error) {
 	// TODO
 	return "", 0, nil
 }
 
-func (n *NostrMLS) processMessageForGroup(groupID, message []byte) ([]byte, error) {
+func (n *NostrMLS) ProcessMessageForGroup(groupID, message []byte) ([]byte, error) {
 	// TODO
 	return nil, nil
 }
 
-func (n *NostrMLS) memberPubkeys(groupID []byte) ([]string, error) {
+func (n *NostrMLS) MemberPubkeys(groupID []byte) ([]string, error) {
 	// TODO
 	return nil, nil
 }
 
-func (n *NostrMLS) selfUpdate(groupID []byte) (*SelfUpdate, error) {
+func (n *NostrMLS) NewSelfUpdate(groupID []byte) (*SelfUpdate, error) {
 	// TODO
 	return nil, nil
 }
