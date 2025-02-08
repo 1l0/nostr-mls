@@ -8,17 +8,26 @@ import (
 )
 
 func (n *NostrMLS) CreateKeyPackageHex(pubkey string) (string, error) {
-	cred, err := n.GenerateCredentialWithKey(pubkey)
+	cred, priv, err := n.generateCredentialWithKey(pubkey)
 	if err != nil {
 		return "", err
 	}
 	pkg := &mls.KeyPackage{
-		LeafNode:  mls.LeafNode{},
-		Signature: cred.SignaturePublicKey,
+		Version:     n.protocolVersion,
+		CipherSuite: n.cipherSuite,
+		LeafNode: mls.LeafNode{
+			SignatureKey: cred.SignaturePublicKey,
+			Credential:   *cred.Credential,
+			Capabilities: *n.capabilities(),
+		},
 	}
 	var b cryptobyte.Builder
-	pkg.Marshal(&b)
-	result, err := b.Bytes()
+	pkg.MarshalTBS(&b)
+	tbs, err := b.Bytes()
+	if err != nil {
+		return "", err
+	}
+	result, err := n.cipherSuite.SignWithLabel(priv, []byte{}, tbs)
 	if err != nil {
 		return "", err
 	}
@@ -35,13 +44,13 @@ func (n *NostrMLS) DeleteKeyPackageFromStore(keyPackage *KeyPackage) error {
 	return nil
 }
 
-func (n *NostrMLS) GenerateCredentialWithKey(pubkey string) (*CredentialWithKey, error) {
+func (n *NostrMLS) generateCredentialWithKey(pubkey string) (*CredentialWithKey, []byte, error) {
 	priv, pub, err := n.cipherSuite.SignatureScheme().GenerateKeys()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if err := n.store.Upsert([]byte(pubkey), priv); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	return &CredentialWithKey{
 		Credential: &mls.Credential{
@@ -49,7 +58,7 @@ func (n *NostrMLS) GenerateCredentialWithKey(pubkey string) (*CredentialWithKey,
 			Identity:       []byte(pubkey),
 		},
 		SignaturePublicKey: pub,
-	}, nil
+	}, priv, nil
 }
 
 type CredentialWithKey struct {
