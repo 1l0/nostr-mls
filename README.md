@@ -13,10 +13,11 @@ WIP
 
 ### Key Packages
 
-- [ ] Generate a BasicCredential with a signing key
-- [ ] Create a key package
-- [ ] Delete a key package from MLS storage
-- [ ] Parse a key package
+- [x] Generate a BasicCredential with a signing key
+- [x] Create a key package
+- [ ] ~~Delete a key package from store~~ **not planed**
+  - We only store signature keys
+- [x] Parse a key package
 
 ### Welcomes
 

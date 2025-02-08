@@ -2,13 +2,14 @@ package mls
 
 import (
 	"encoding/hex"
+	"fmt"
 
 	"github.com/emersion/go-mls"
 	"golang.org/x/crypto/cryptobyte"
 )
 
 func (n *NostrMLS) CreateKeyPackageHex(pubkey string) (string, error) {
-	cred, priv, err := n.generateCredentialWithKey(pubkey)
+	cred, priv, err := n.updateCredentialWithKey(pubkey)
 	if err != nil {
 		return "", err
 	}
@@ -35,16 +36,19 @@ func (n *NostrMLS) CreateKeyPackageHex(pubkey string) (string, error) {
 }
 
 func (n *NostrMLS) ParseKeyPackage(keyPackageHex string) (*KeyPackage, error) {
-	// TODO
-	return nil, nil
+	pkg := &mls.KeyPackage{}
+	b := cryptobyte.String(keyPackageHex)
+	if err := pkg.Unmarshal(&b); err != nil {
+		return nil, err
+	}
+	if !pkg.VerifySignature() {
+		return nil, fmt.Errorf("invalid signature")
+	}
+	p := KeyPackage(*pkg)
+	return &p, nil
 }
 
-func (n *NostrMLS) DeleteKeyPackageFromStore(keyPackage *KeyPackage) error {
-	// TODO
-	return nil
-}
-
-func (n *NostrMLS) generateCredentialWithKey(pubkey string) (*CredentialWithKey, []byte, error) {
+func (n *NostrMLS) updateCredentialWithKey(pubkey string) (*CredentialWithKey, []byte, error) {
 	priv, pub, err := n.cipherSuite.SignatureScheme().GenerateKeys()
 	if err != nil {
 		return nil, nil, err
