@@ -6,6 +6,13 @@ import (
 	"github.com/1l0/nostr-mls/extension"
 )
 
+const (
+	KindMLSKeyPackage       = 443
+	kindMLSWelcome          = 444
+	KindMLSGroupMessage     = 445
+	KindMLSKeyPackageRelays = 10051
+)
+
 type NostrMLS struct {
 	protocolVersion mls.ProtocolVersion
 	cipherSuite     mls.CipherSuite

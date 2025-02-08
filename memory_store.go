@@ -4,6 +4,7 @@ import (
 	"sync"
 )
 
+// MemoryStore is used for tests
 type MemoryStore struct {
 	mu      sync.RWMutex
 	entries map[string][]byte

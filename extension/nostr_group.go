@@ -14,11 +14,11 @@ const (
 )
 
 type NostrGroupData struct {
-	id          []byte
-	name        []byte
-	description []byte
-	admins      [][]byte
-	relays      [][]byte
+	ID          []byte
+	Name        []byte
+	Description []byte
+	Admins      [][]byte
+	Relays      [][]byte
 }
 
 // NewNostrGroupData creates new NostrGroup.
@@ -40,11 +40,11 @@ func NewNostrGroupData(name, description string, admins, relays []string) (*Nost
 		r[i] = []byte(relays[i])
 	}
 	return &NostrGroupData{
-		id:          id,
-		name:        []byte(name),
-		description: []byte(description),
-		admins:      a,
-		relays:      r,
+		ID:          id,
+		Name:        []byte(name),
+		Description: []byte(description),
+		Admins:      a,
+		Relays:      r,
 	}, nil
 }
 
@@ -69,7 +69,7 @@ func NostrGroupDataFromContext(ctx *mls.GroupContext) (*NostrGroupData, error) {
 func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
 	*n = NostrGroupData{}
 
-	if !mls.ReadOpaqueVec(s, &n.id) || !mls.ReadOpaqueVec(s, &n.name) || !mls.ReadOpaqueVec(s, &n.description) {
+	if !mls.ReadOpaqueVec(s, &n.ID) || !mls.ReadOpaqueVec(s, &n.Name) || !mls.ReadOpaqueVec(s, &n.Description) {
 		return io.ErrUnexpectedEOF
 	}
 
@@ -78,7 +78,7 @@ func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
 		if !mls.ReadOpaqueVec(s, &pubkey) {
 			return io.ErrUnexpectedEOF
 		}
-		n.admins = append(n.admins, pubkey)
+		n.Admins = append(n.Admins, pubkey)
 		return nil
 	}); err != nil {
 		return err
@@ -89,22 +89,22 @@ func (n *NostrGroupData) Unmarshal(s *cryptobyte.String) error {
 		if !mls.ReadOpaqueVec(s, &relay) {
 			return io.ErrUnexpectedEOF
 		}
-		n.relays = append(n.relays, relay)
+		n.Relays = append(n.Relays, relay)
 		return nil
 	})
 }
 
 func (n *NostrGroupData) Marshal(b *cryptobyte.Builder) {
-	mls.WriteOpaqueVec(b, n.id)
-	mls.WriteOpaqueVec(b, n.name)
-	mls.WriteOpaqueVec(b, n.description)
+	mls.WriteOpaqueVec(b, n.ID)
+	mls.WriteOpaqueVec(b, n.Name)
+	mls.WriteOpaqueVec(b, n.Description)
 
-	mls.WriteVector(b, len(n.admins), func(b *cryptobyte.Builder, i int) {
-		mls.WriteOpaqueVec(b, n.admins[i])
+	mls.WriteVector(b, len(n.Admins), func(b *cryptobyte.Builder, i int) {
+		mls.WriteOpaqueVec(b, n.Admins[i])
 	})
 
-	mls.WriteVector(b, len(n.relays), func(b *cryptobyte.Builder, i int) {
-		mls.WriteOpaqueVec(b, n.relays[i])
+	mls.WriteVector(b, len(n.Relays), func(b *cryptobyte.Builder, i int) {
+		mls.WriteOpaqueVec(b, n.Relays[i])
 	})
 }
 

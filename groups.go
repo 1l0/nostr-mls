@@ -7,9 +7,9 @@ import (
 )
 
 type CreateGroup struct {
-	groupContext   mls.GroupContext
+	groupContext   *mls.GroupContext
 	Message        []byte
-	NostrGroupData extension.NostrGroupData
+	NostrGroupData *extension.NostrGroupData
 }
 
 type SelfUpdate struct {
@@ -19,9 +19,11 @@ type SelfUpdate struct {
 	Epoch              uint64
 }
 
+type KeyPackage mls.KeyPackage
+
 // creator: pubkey
 // admins: list of pubkeys
-func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPackages []mls.KeyPackage, admins, relays []string) (*CreateGroup, error) {
+func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPackages []KeyPackage, admins, relays []string) (*CreateGroup, error) {
 	// cap := n.Capabilities()
 	// cred, err := n.GenerateCredentialWithKey(creator)
 	// if err != nil {
@@ -46,9 +48,9 @@ func (n *NostrMLS) NewCreateGroup(name, description, creator string, memberKeyPa
 	return nil, nil
 }
 
-func (n *NostrMLS) CreateMessageForGroup(groupID []byte, message string) ([]byte, error) {
+func (n *NostrMLS) CreateMessageForGroup(groupID []byte, message string) (string, error) {
 	// TODO
-	return nil, nil
+	return "", nil
 }
 
 func (n *NostrMLS) ExporterSecretWithEpoch(groupID []byte) (string, uint64, error) {
@@ -56,7 +58,7 @@ func (n *NostrMLS) ExporterSecretWithEpoch(groupID []byte) (string, uint64, erro
 	return "", 0, nil
 }
 
-func (n *NostrMLS) ProcessMessageForGroup(groupID, message []byte) ([]byte, error) {
+func (n *NostrMLS) ProcessMessageForGroup(groupID []byte, message string) ([]byte, error) {
 	// TODO
 	return nil, nil
 }

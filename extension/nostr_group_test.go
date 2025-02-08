@@ -22,19 +22,19 @@ func TestNewNostrGroup(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(group.id) != 32 {
-		t.Fatalf("group id != 32 length: %d", len(group.id))
+	if len(group.ID) != 32 {
+		t.Fatalf("group id != 32 length: %d", len(group.ID))
 	}
-	if string(group.name) != "bla" {
+	if string(group.Name) != "bla" {
 		t.Fatal("failed to set group name")
 	}
-	if string(group.description) != "foo" {
+	if string(group.Description) != "foo" {
 		t.Fatal("failed to set group description")
 	}
-	if string(group.admins[1]) != "0000000000000000000000000000002" {
+	if string(group.Admins[1]) != "0000000000000000000000000000002" {
 		t.Fatal("failed to set group admins")
 	}
-	if string(group.relays[1]) != "wss://relay.efgh.net" {
+	if string(group.Relays[1]) != "wss://relay.efgh.net" {
 		t.Fatal("failed to set group relays")
 	}
 }
@@ -86,19 +86,19 @@ func TestNostrGroupFromGroupContext(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(result.id) != 32 {
-		t.Fatalf("group id != 32 length: %d", len(result.id))
+	if len(result.ID) != 32 {
+		t.Fatalf("group id != 32 length: %d", len(result.ID))
 	}
-	if string(result.name) != "bla" {
+	if string(result.Name) != "bla" {
 		t.Fatal("failed to set group name")
 	}
-	if string(result.description) != "foo" {
+	if string(result.Description) != "foo" {
 		t.Fatal("failed to set group description")
 	}
-	if string(result.admins[1]) != "0000000000000000000000000000002" {
+	if string(result.Admins[1]) != "0000000000000000000000000000002" {
 		t.Fatal("failed to set group admins")
 	}
-	if string(result.relays[1]) != "wss://relay.efgh.net" {
+	if string(result.Relays[1]) != "wss://relay.efgh.net" {
 		t.Fatal("failed to set group relays")
 	}
 }
