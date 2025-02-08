@@ -23,20 +23,20 @@ func main() {
 		panic(err)
 	}
 
-	// bob's key package is published as [nmls.KindMLSKeyPackage] event on relays
+	// Bob's key package is published as [mls.KindMLSKeyPackage] event on relays
 	bobPkgHex, err := nostrMLS.CreateKeyPackageHex(bobPubkey)
 
 	// ================================
 	// We're now acting as Alice
 	// ================================
 
-	// fetch bob's key package event
+	// fetch Bob's key package event
 	bobPkg, err := nostrMLS.ParseKeyPackage(bobPkgHex)
 	if err != nil {
 		panic(err)
 	}
 
-	// create a group bob can join and Commit as [mls.KindMLSGroupMessage] on group relays
+	// create a group Bob can join and publish [mls.KindMLSGroupMessage] with Proposal/Commit on group relays
 	group, err := nostrMLS.NewGroup(
 		"Bob & Alice",
 		"A secret chat between Bob and Alice",
@@ -51,8 +51,8 @@ func main() {
 	groupData := group.NostrGroupData
 	welcomeMessage := group.WelcomeMessage
 
-	// wait Commit has been done on group relays (to match the welcome message),
-	// then send a gift-wrapped welcome event to bob's DM relays
+	// wait publishing done on group relays to match the welcome message,
+	// then send a gift-wrapped welcome event to Bob's DM relays
 	welcomeHex := hex.EncodeToString(welcomeMessage)
 	unsignedEvent := &nostr.Event{
 		PubKey:    alicePubkey,
@@ -62,7 +62,28 @@ func main() {
 	}
 	unsignedEvent.ID = unsignedEvent.GetID()
 
-	// send a message to group relays
+	// ================================
+	// We're now acting as Bob
+	// ================================
+
+	// fetch a gift-wrapped welcome event from DM relays
+	_, err = nostrMLS.PreviewWelcome(welcomeMessage)
+	if err != nil {
+		panic(err)
+	}
+	// if we are interested in, let's join the group
+	group, err = nostrMLS.Join(welcomeMessage)
+	if err != nil {
+		panic(err)
+	}
+	groupData = group.NostrGroupData
+
+	// ================================
+	// We're now acting as Alice
+	// ================================
+
+	// if Bob joins, [mls.KindMLSGroupMessage] is updated
+	// after the comfirmation, send a message on group relays
 	unsignedEvent = &nostr.Event{
 		PubKey:    alicePubkey,
 		Kind:      nostr.KindSimpleGroupChatMessage,
@@ -106,18 +127,7 @@ func main() {
 	// We're now acting as Bob
 	// ================================
 
-	// fetch a gift-wrapped welcome event from DM relays
-	_, err = nostrMLS.PreviewWelcome(welcomeMessage)
-	if err != nil {
-		panic(err)
-	}
-	// if Bob likes it, he joins the group
-	_, err = nostrMLS.Join(welcomeMessage)
-	if err != nil {
-		panic(err)
-	}
-
-	// fetch a group message event from group relays
+	// fetch the message from group relays
 	decryptedMessage, err := nip44.Decrypt(chatMessageEvent.Content, convKey)
 	if err != nil {
 		panic(err)
@@ -130,5 +140,5 @@ func main() {
 	if err := json.Unmarshal(serializedChatEvent, &evt); err != nil {
 		panic(err)
 	}
-	log.Printf("Bob received from Alice:\n%+v\n", evt)
+	log.Printf("Message from Alice:\n%+v\n", evt)
 }
