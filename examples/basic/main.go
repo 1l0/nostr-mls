@@ -67,12 +67,12 @@ func main() {
 	// ================================
 
 	// fetch a gift-wrapped welcome event from DM relays
-	_, err = nostrMLS.PreviewWelcome(welcomeMessage)
+	info, err := nostrMLS.GroupInfoFromPreview(welcomeMessage, bobPkg, bobPubkey)
 	if err != nil {
 		panic(err)
 	}
 	// if we are interested in, let's join the group
-	group, err = nostrMLS.Join(welcomeMessage)
+	group, err = nostrMLS.Join(info)
 	if err != nil {
 		panic(err)
 	}

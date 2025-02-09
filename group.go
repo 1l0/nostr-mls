@@ -7,9 +7,9 @@ import (
 )
 
 type Group struct {
-	groupContext   *mls.GroupContext
-	WelcomeMessage []byte
+	Context        *mls.GroupContext
 	NostrGroupData *extension.NostrGroupData
+	WelcomeMessage []byte
 }
 
 type GroupUpdateInfo struct {

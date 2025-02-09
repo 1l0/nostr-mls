@@ -21,6 +21,6 @@ WIP
 
 ### Welcomes
 
-- [ ] Parse a welcome message
-- [ ] Preview a welcome message
-- [ ] Join a group from a welcome message
+- [x] Parse a welcome message
+- [x] Preview a welcome message
+- [x] Join a group from a welcome message
