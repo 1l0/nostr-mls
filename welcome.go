@@ -7,8 +7,8 @@ import (
 )
 
 type WelcomePreview struct {
-	Welcome    *Welcome
-	NostrGroup *extension.NostrGroupData
+	Welcome        *Welcome
+	NostrGroupData *extension.NostrGroupData
 }
 
 type Welcome mls.Welcome
@@ -18,7 +18,7 @@ func (n *NostrMLS) PreviewWelcome(welcomeMessage []byte) (*WelcomePreview, error
 	return nil, nil
 }
 
-func (n *NostrMLS) Join(welcomeMessage []byte) (*Group, error) {
+func (p *WelcomePreview) Join() (*Group, error) {
 	// TODO
 	return nil, nil
 }
